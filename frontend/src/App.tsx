@@ -1,7 +1,8 @@
-import { MyButton } from "./components/MyButton";
-import { useState } from "react";
-import CreateMonster from "./components/CreateMonster";
 
+import { useState } from "react";
+import AppOptions from "./components/AppOptions";
+import CreateMonster from "./components/CreateMonster";
+import type { Option } from "./components/AppOptions";
 
 function App() {
   const [option, setOption] = useState<Option>("Create");

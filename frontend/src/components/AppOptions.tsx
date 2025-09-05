@@ -1,6 +1,6 @@
 import { MyButton } from "./MyButton";
 
-type Option = "Create" | "View";
+export type Option = "Create" | "View";
 
 type AppOptionsProps = {
     value: Option; // current selection from parent
