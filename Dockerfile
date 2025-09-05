@@ -18,12 +18,12 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy backend code
-COPY backend/ /app/nackend
+COPY backend/ /app/backend
 
 # Copy frontend build into backend
 COPY --from=frontend-build /frontend/dist /app/frontend
 
-ENV PYTHONPATH=/app/backend
+ENV PYTHONPATH=/app/
 EXPOSE 80
 
-CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["python", "-m", "uvicorn", "backend.src.main:app", "--host", "0.0.0.0", "--port", "80"]
