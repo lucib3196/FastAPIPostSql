@@ -1,0 +1,29 @@
+# ========================
+# Frontend build
+# ========================
+FROM node:20 AS frontend-build
+WORKDIR /frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm run build
+
+# ========================
+# Backend build
+# ========================
+FROM python:3.12-slim
+WORKDIR /app
+
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend code
+COPY backend/src/ /app/src
+
+# Copy frontend build into backend
+COPY --from=frontend-build /frontend/dist /app/frontend
+
+ENV PYTHONPATH=/app
+EXPOSE 80
+
+CMD ["python", "-m", "uvicorn", "src.backend.main:app", "--host", "0.0.0.0", "--port", "80"]
