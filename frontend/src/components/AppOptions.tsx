@@ -17,9 +17,9 @@ export default function AppOptions({ value, onChange }: AppOptionsProps) {
                 onClick={() => onChange("Create")}
             ></MyButton>
             <MyButton
-                disabled={true}
                 name={"View the Monsters"}
                 onClick={() => onChange("View")}
+                
             ></MyButton>
         </div>
     );

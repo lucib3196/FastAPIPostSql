@@ -12,17 +12,19 @@ type MyButtonProps = {
     name: string;
     variant?: ButtonVariant;
     className?: string;
-    onClick: () => void;
+    onClick?: () => void;
     disabled?: boolean;
+    btype: "button" | "submit" | "reset";
 };
 
-export const MyButton = ({ name, variant = "primary", className, onClick, disabled, }: MyButtonProps) => {
+export const MyButton = ({ name, variant = "primary", className, onClick, disabled, btype = "button" }: MyButtonProps) => {
     return (
         <button
+            type={btype}
             onClick={onClick}
             disabled={disabled}
             className={clsx(
-                "px-4 py-2 rounded font-semibold transition-colors duration-300 delay-300 ease-in-out hover:-translate-y-1 hover:scale-110",
+                "px-4 py-2 rounded font-semibold transition-colors duration-300 ease-in-out hover:-translate-y-1 hover:scale-110",
                 variantClasses[variant],
                 disabled && "opacity-50 cursor-not-allowed",
                 className

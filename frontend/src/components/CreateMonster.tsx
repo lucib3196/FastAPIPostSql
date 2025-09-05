@@ -1,40 +1,80 @@
+import { useState } from "react";
+import { MyButton } from "./MyButton";
+
+
+
+
 export default function CreateMonster() {
+    const [monsterType, setMonsterType] = useState("");
+    const [monsterName, setMonsterName] = useState("");
+    const [monsterDescription, setMonsterDescription] = useState("");
+    const [monsterPhysical, setMonsterPhysical] = useState("");
+
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState<string | null>(null);
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+        setLoading(true);
+        setResult(null);
+
+
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("monsterName", monsterName);
+        formData.append("monsterType", monsterType);
+        formData.append("monsterDescription", monsterDescription);
+        formData.append("monsterPhysical", monsterPhysical);
+        console.log(Object.fromEntries(formData.entries()));
+
+        setTimeout(() => {
+            setLoading(false);
+            setResult("Monster created successfully!");
+        }, 2000);
+    };
+
+    if (loading) {
+        return (
+            <div>Loading</div>
+        )
+    }
+
     return (
         <div className="w-full flex flex-col justify-center items-centerw-full text-white px-6 py-8 bg-gray-900 rounded-2xl">
             <h1 className="font-bold text-3xl text-center mb-8">
                 Create Your Own Monster!
             </h1>
 
-            <form action="submit" className="space-y-10">
+            <form onSubmit={handleSubmit} className="space-y-10">
                 {/* Identity Section */}
                 <section className="flex flex-col space-y-4">
                     <h2 className="text-2xl font-bold">Identity</h2>
                     <hr className="border-gray-500" />
 
-                    <label
-                        htmlFor="MonsterName"
-                        className="block text-sm font-bold"
-                    >
+                    <label htmlFor="MonsterName" className="block text-sm font-bold">
                         Monster Name
                     </label>
                     <input
                         type="text"
                         id="MonsterName"
                         placeholder="e.g. Fluffernox"
+                        name="MonsterName"
+                        required
+                        onChange={(e) => setMonsterName(e.target.value)}
                         className="shadow appearance-none border rounded w-full py-2 px-3 bg-gray-50 text-black leading-tight focus:outline-none focus:shadow-outline"
                     />
 
-                    <label
-                        htmlFor="Description"
-                        className="block text-sm font-bold"
-                    >
+                    <label htmlFor="Description" className="block text-sm font-bold">
                         Short Description
                     </label>
                     <textarea
-                        id="Description"
+                        id="MonsterDescription"
                         rows={4}
+                        name="MonsterDescription"
                         placeholder="A playful cloud fox that loves mountain skies..."
                         className="shadow appearance-none border rounded w-full py-2 px-3  bg-gray-50 text-black leading-tight focus:outline-none focus:shadow-outline"
+                        onChange={(e) => setMonsterDescription(e.target.value)}
+                        required
                     />
                 </section>
 
@@ -43,17 +83,17 @@ export default function CreateMonster() {
                     <h2 className="text-2xl font-bold">Visual Appearance</h2>
                     <hr className="border-gray-500" />
 
-                    <label
-                        htmlFor="MonsterPhysical"
-                        className="block text-sm font-bold"
-                    >
+                    <label htmlFor="MonsterPhysical" className="block text-sm font-bold">
                         Physical Features
                     </label>
                     <textarea
                         id="MonsterPhysical"
+                        name="MonsterPhysical"
                         rows={4}
                         placeholder="Describe body shape, colors, wings, horns, etc."
                         className="shadow appearance-none border rounded w-full py-2 px-3  bg-gray-50 text-black leading-tight focus:outline-none focus:shadow-outline"
+                        onChange={(e) => setMonsterPhysical(e.target.value)}
+                        required
                     />
                 </section>
 
@@ -65,12 +105,25 @@ export default function CreateMonster() {
                     <div className="space-y-2">
                         {["fire", "water", "grass", "electric", "psychic"].map((val) => (
                             <label key={val} className="flex items-center gap-x-2">
-                                <input type="radio" name="type" value={val} />
+                                <input
+                                    type="radio"
+                                    name="Monstertype"
+                                    value={val}
+                                    onChange={(e) => setMonsterType(e.target.value)}
+                                    required
+                                />
                                 {val.charAt(0).toUpperCase() + val.slice(1)}
                             </label>
                         ))}
                     </div>
                 </section>
+                <div className="w-full flex items-center justify-center">
+                    <MyButton
+                        btype="submit"
+                        name={"Create Monster"}
+                        className="w-8/10  text-2xl !bg-green-500 hover:!bg-green-800"
+                    />
+                </div>
             </form>
         </div>
     );

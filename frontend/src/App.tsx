@@ -2,6 +2,7 @@
 import { useState } from "react";
 import AppOptions from "./components/AppOptions";
 import CreateMonster from "./components/CreateMonster";
+import { MonsterEgg } from "./components/MonsterEgg";
 import type { Option } from "./components/AppOptions";
 
 function App() {
@@ -23,8 +24,12 @@ function App() {
 
 
 
-function ViewMonsters() {
-  return <div className="text-white">A collection of Monsters</div>;
+export function ViewMonsters() {
+  return (
+    <div className="text-white flex justify-center items-center h-full">
+      <MonsterEgg canMove={true} />
+    </div>
+  );
 }
 
 export default App;
