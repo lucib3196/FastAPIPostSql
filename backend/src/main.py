@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from src.backend.db import create_db_and_tables
-from src.backend.routes.pokemon import router
+from backend.src.db import create_db_and_tables
+from backend.src.routes.pokemon import router
 
 
 @asynccontextmanager
