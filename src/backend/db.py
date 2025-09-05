@@ -2,13 +2,13 @@ from os import environ
 from fastapi import Depends
 from typing import Annotated
 from sqlmodel import create_engine, Session, SQLModel
+from dotenv import load_dotenv
+import os
 
-username = environ.get("POSTGRES_USER")
-password = environ.get("POSTGRES_PASSWORD")
-host = environ.get("POSTGRES_HOST")
-db = environ.get("POSTGRES_DB")
+load_dotenv()
 
-postgress_url = f"postgresql://{username}:{password}@{host}:5432/{db}"
+
+postgress_url = str(os.getenv("POSTGRES_URL"))
 
 
 engine = create_engine(postgress_url)
@@ -17,7 +17,10 @@ engine = create_engine(postgress_url)
 def get_session():
     with Session(engine) as session:
         yield session
+
+
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
+
 
 SessionType = Annotated[Session, Depends(get_session)]
