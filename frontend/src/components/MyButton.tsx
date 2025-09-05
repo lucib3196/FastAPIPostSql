@@ -14,7 +14,7 @@ type MyButtonProps = {
     className?: string;
     onClick?: () => void;
     disabled?: boolean;
-    btype: "button" | "submit" | "reset";
+    btype?: "button" | "submit" | "reset";
 };
 
 export const MyButton = ({ name, variant = "primary", className, onClick, disabled, btype = "button" }: MyButtonProps) => {
