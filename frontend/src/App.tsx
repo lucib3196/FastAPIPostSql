@@ -12,7 +12,7 @@ function App() {
       <div className="flex flex-col justify-center items-center mx-auto my-40 gap-y-5">
         <h1 className="font-bold text-2xl text-white">Monster PlayGround</h1>
         <p className="font-bold text-gray-300">Create or View Monsters</p>
-        <AppOptions value={option} onChange={setOption} />
+        <AppOptions onChange={setOption} />
       </div>
       <div className="flex flex-col w-7/10  items-center justify-center m-6 gap-y-4">
 
