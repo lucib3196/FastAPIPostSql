@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException, Depends
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from typing import List, Annotated
-from routes.pokemon import router
-from backend.db import create_db_and_tables
+from src.backend.db import create_db_and_tables
+from src.backend.routes.pokemon import router
 
 
 
