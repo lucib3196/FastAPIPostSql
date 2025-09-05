@@ -1,7 +1,7 @@
 
 
 function App() {
-  return <div>Hello World</div>;
+  return <div className="font-bold">Hello World</div>;
 }
 
 export default App;

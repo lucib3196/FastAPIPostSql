@@ -4,17 +4,19 @@ from src.db import SessionType
 from typing import List
 from fastapi import HTTPException
 from sqlmodel import select
+from src.services import pokemon_service
+
+router = APIRouter(prefix="/pokemon", tags=["pokemon"])
 
 
-router = APIRouter(prefix="/pokemon")
-
-
-@router.post("/")
-def add_pokemon(pokemon: Pokemon, session: SessionType) -> Pokemon:
-    session.add(pokemon)
-    session.commit()
-    session.refresh(pokemon)
-    return pokemon
+@router.post("/create")
+def add_pokemon(pokemon_name: str, session: SessionType) -> Pokemon:
+    print(f"Got name, {pokemon_name}")
+    try:
+        p = Pokemon(name=pokemon_name)
+        return pokemon_service.add_pokemon(p, session)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{pokemon_id}")

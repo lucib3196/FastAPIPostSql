@@ -8,7 +8,7 @@ class Region(Enum):
     johto = "Jothto"
 
 
-class Pokemon(SQLModel):
+class Pokemon(SQLModel ,table=True):
     id: int | None = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now())
     name: str
