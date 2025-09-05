@@ -1,4 +1,3 @@
-from os import environ
 from fastapi import Depends
 from typing import Annotated
 from sqlmodel import create_engine, Session, SQLModel
