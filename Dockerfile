@@ -24,6 +24,6 @@ COPY backend/ /app/backend
 COPY --from=frontend-build /frontend/dist /app/frontend
 
 ENV PYTHONPATH=/app/backend
-EXPOSE 80
+EXPOSE 8005
 
-CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8005"]
