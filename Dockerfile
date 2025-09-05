@@ -11,4 +11,4 @@ COPY src/ /app/src/backend
 
 EXPOSE 8005
 
-CMD ["python", "-m", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8005"]
+CMD ["python", "-m", "uvicorn", "src.backend.main:app", "--host", "0.0.0.0", "--port", "8005"]
