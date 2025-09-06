@@ -98,7 +98,7 @@ export function SpriteWalking({
             className="flex items-center justify-center"
         >
             <Layer>
-                <URLImage ref={imageRef} src={imageUrl(src)} />
+                <URLImage ref={imageRef} src={imageUrl("/images/"+src)} />
             </Layer>
         </Stage>
     );
