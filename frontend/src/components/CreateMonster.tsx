@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MyButton } from "./MyButton";
-
+import api from "../api/api";
 
 
 
@@ -13,24 +13,30 @@ export default function CreateMonster() {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         setLoading(true);
         setResult(null);
-
-
         e.preventDefault();
         const formData = new FormData();
-        formData.append("monsterName", monsterName);
-        formData.append("monsterType", monsterType);
-        formData.append("monsterDescription", monsterDescription);
-        formData.append("monsterPhysical", monsterPhysical);
+        formData.append("name", monsterName);
+        formData.append("ptype", monsterType);
+        formData.append("description", monsterDescription);
+        formData.append("physical_attr", monsterPhysical);
         console.log(Object.fromEntries(formData.entries()));
 
-        setTimeout(() => {
-            setLoading(false);
-            setResult("Monster created successfully!");
-        }, 2000);
+        try {
+            const result = await api.post("/pokemon/create_with_image/", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            console.log(result.data);
+
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
     };
 
     if (loading) {
