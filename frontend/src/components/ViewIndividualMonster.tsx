@@ -27,8 +27,9 @@ export function ViewIndividualMonster() {
         };
         getMonster();
     }, []);
-
+    
     const animationNames = monsterData.map((val) => val.name);
+    console.log(animationNames)
     const srcObj = monsterData.find(
         (v) => v.name.toLowerCase() === selectedAnimation.toLowerCase()
     );
