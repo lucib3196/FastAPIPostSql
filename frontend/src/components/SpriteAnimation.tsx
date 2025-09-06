@@ -3,6 +3,7 @@ import useImage from "use-image";
 import { useEffect, useRef, forwardRef } from "react";
 import Konva from "konva";
 import { useContainerSize } from "./ResizableContainer";
+import { imageUrl } from "../config";
 
 type Size = {
     width: number;
@@ -97,7 +98,7 @@ export function SpriteWalking({
             className="flex items-center justify-center"
         >
             <Layer>
-                <URLImage ref={imageRef} src={`http://127.0.0.1:8000/images/${src}`} />
+                <URLImage ref={imageRef} src={imageUrl(src)} />
             </Layer>
         </Stage>
     );
