@@ -1,7 +1,7 @@
 import { Stage, Layer, Text, Rect, Image } from "react-konva";
 import useImage from "use-image";
 import { useEffect, useRef, forwardRef } from "react";
-import type Konva from "./../../node_modules/konva/lib/index-types.d";
+import Konva from "./../../node_modules/konva/lib/index-types.d";
 import { useContainerSize } from "./ResizableContainer";
 
 type Size = {
