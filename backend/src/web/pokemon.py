@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from src.models import Pokemon, ImageDir
-from src.db import SessionType
+from backend.src.database.db import SessionType
 from typing import List
 from fastapi import HTTPException
 from sqlmodel import select

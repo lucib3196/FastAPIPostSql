@@ -1,6 +1,8 @@
 from .prompts import *
 from src.models import *
 
+PokemonSearchInput = Union[Pokemon, Mapping[str, int | str]]
+
 
 def normalize_input(data: PokemonInput):
     """
@@ -33,3 +35,17 @@ def format_prompt(template: str, data: PokemonData) -> str:
         physical_attr=data.physical_attr,
         ptype=data.ptype,
     )
+
+
+def format_pokemon_folder_name(data: PokemonSearchInput):
+    try:
+        if isinstance(data, Pokemon):
+            pokemon_name = data.name
+            pokemon_id = data.id
+        else:
+            pokemon_name = data["name"]
+            pokemon_id = data["id"]
+        name = f"{pokemon_name}_{pokemon_id}"
+        return name.strip().lower()
+    except Exception as e:
+        raise e

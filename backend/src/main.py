@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
-from src.db import create_db_and_tables
+from backend.src.database.db import create_db_and_tables
 from src.routes.pokemon import router
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
