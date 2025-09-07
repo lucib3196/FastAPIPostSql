@@ -1,7 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
-from backend.src.database.db import create_db_and_tables
-from src.routes.pokemon import router
+from src.database.db import create_db_and_tables
+
+# from src.web.pokemon import router
+from src.web.pokemon_folder import router as pw_router
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
@@ -17,7 +19,9 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(router)
+# app.include_router(router)
+app.include_router(pw_router)
+
 origins = [
     "http://localhost:5173",  # Vite dev
     "http://127.0.0.1:5173",
@@ -39,6 +43,7 @@ def list_images():
         raise HTTPException(500, f"Not found: {IMAGES_DIR}")
     return [p.name for p in IMAGES_DIR.iterdir() if p.is_file()]
 
+
 IMAGES_DIR = Path(__file__).resolve().parent / "images"
 
 app.mount(
@@ -47,4 +52,3 @@ app.mount(
     name="images",
 )
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
-

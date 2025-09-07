@@ -2,7 +2,7 @@ from app_test.unit.services.fixture_pokemon_service import *
 from src.services import pokemon_folder_service as pokemon_service
 from pathlib import Path
 from src.core.pokemon_config import MonsterConfig
-from src.services.pokemon_utils import format_pokemon_folder_name
+from backend.src.utils.pokemon_utils import format_pokemon_folder_name
 from src.models import PokemonData
 import json
 from src.response_models import PokemonResponsePaths
@@ -72,7 +72,7 @@ async def test_get_image_directory(pokemon_payload, db_session, tmp_path, monkey
 
     assert expected.exists()
 
-    data = pokemon_service.get_pokemon_directory(
+    data = await pokemon_service.get_pokemon_directory(
         pokemon_id=pokemon_payload.id, session=db_session
     )
     assert Path(data.paths[0]) == expected
@@ -188,7 +188,7 @@ async def test_set_pokemon_image(db_session, pokemon_payload, tmp_path, monkeypa
     image_bytes = b"\x89PNG\r\n\x1a\n" + b"FAKEPNGDATA"
     fake_file = UploadFile(file=BytesIO(image_bytes), filename="pikachu.png")
 
-    response = pokemon_service.add_pokemon_image(
+    response = await pokemon_service.add_pokemon_image(
         pokemon_id=pokemon_payload.id,
         option="base",
         session=db_session,
@@ -199,3 +199,48 @@ async def test_set_pokemon_image(db_session, pokemon_payload, tmp_path, monkeypa
     saved_file = Path(saved_path)
     assert saved_file.exists()
     assert saved_file.read_bytes().startswith(b"\x89PNG")
+
+
+@pytest.mark.asyncio
+async def test_get_all_pokemon_images(
+    db_session, pokemon_payload, tmp_path, monkeypatch
+):
+    # Monkeypatch MONSTER_DIR to tmp_path
+    fake_monster_dir = tmp_path / "monsters"
+    monkeypatch.setattr(MonsterConfig, "MONSTER_DIR", fake_monster_dir)
+
+    # Ensure Pokémon directory and folders exist
+    await pokemon_service.set_pokemon_directory(
+        pokemon_id=pokemon_payload.id,
+        session=db_session,
+    )
+    await pokemon_service.add_required_folders_pokemon(
+        pokemon_id=pokemon_payload.id,
+        session=db_session,
+    )
+
+    # Fake PNG file to save
+    image_bytes = b"\x89PNG\r\n\x1a\n" + b"FAKEPNGDATA"
+    fake_file = UploadFile(file=BytesIO(image_bytes), filename="pikachu.png")
+
+    # Save image into the "base" folder
+    response = await pokemon_service.add_pokemon_image(
+        pokemon_id=pokemon_payload.id,
+        option="base",
+        session=db_session,
+        file=fake_file,
+    )
+    saved_path = Path(response.paths[0])
+    assert saved_path.exists()
+
+    # Now test get_all_pokemon_images
+    files = await pokemon_service.get_all_pokemon_images(
+        pokemon_id=pokemon_payload.id,
+        option="base",
+        session=db_session,
+    )
+
+    # Assertions
+    assert isinstance(files, list)
+    assert saved_path in files
+    assert all(f.suffix == ".png" for f in files)

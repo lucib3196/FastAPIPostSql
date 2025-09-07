@@ -14,7 +14,7 @@ from src.database.db import SessionType
 from src.models import PokemonInput
 from src.response_models import PokemonResponse, PokemonResponsePaths
 from src.services.pokemon_service import get_pokemon_by_id
-from src.services.pokemon_utils import format_pokemon_folder_name
+from src.utils.pokemon_utils import format_pokemon_folder_name
 
 
 async def set_pokemon_directory(pokemon_id: int, session: SessionType):
@@ -57,7 +57,7 @@ async def set_pokemon_directory(pokemon_id: int, session: SessionType):
         )
 
 
-def get_pokemon_directory(pokemon_id: int, session: SessionType):
+async def get_pokemon_directory(pokemon_id: int, session: SessionType):
     try:
         pokemon = get_pokemon_by_id(pokemon_id, session)
     except HTTPException as e:
@@ -198,7 +198,7 @@ async def set_pokemon_base_data(
     """
     try:
         # Resolve the base folder (first path returned)
-        dir_resp = get_pokemon_directory(pokemon_id=pokemon_id, session=session)
+        dir_resp = await get_pokemon_directory(pokemon_id=pokemon_id, session=session)
         if not dir_resp or not getattr(dir_resp, "paths", None):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -283,7 +283,7 @@ async def get_pokemon_file(
     """
     try:
         # Resolve the Pokémon’s base directory
-        response = get_pokemon_directory(pokemon_id=pokemon_id, session=session)
+        response = await get_pokemon_directory(pokemon_id=pokemon_id, session=session)
         pokemon_dir = Path(response.paths[0]).resolve()
 
         # Build target file path
@@ -305,14 +305,14 @@ async def get_pokemon_file(
         )
 
 
-def add_pokemon_image(
+async def add_pokemon_image(
     pokemon_id: int,
     option: Literal["base", "animations"],
     session: SessionType,
     file: UploadFile | None = None,
 ):
     try:
-        response = get_pokemon_directory(pokemon_id, session=session)
+        response = await get_pokemon_directory(pokemon_id, session=session)
         base_dir = response.paths[0]
         image_path = Path(base_dir) / option / file.filename  # type: ignore
         if file:
@@ -325,7 +325,7 @@ def add_pokemon_image(
             status=200,
             detail=f"Added image, {image_path}",
             pokemon=get_pokemon_by_id(pokemon_id, session),
-            paths=[image_path]
+            paths=[image_path],
         )
     except HTTPException:
         raise
@@ -336,9 +336,11 @@ def add_pokemon_image(
         )
 
 
-def get_all_pokemon_images(pokemon_id: int, option: ImageDir, session: SessionType):
+async def get_all_pokemon_images(
+    pokemon_id: int, option: Literal["base", "animations"], session: SessionType
+):
     try:
-        response = get_pokemon_directory(pokemon_id, session=session)
+        response = await get_pokemon_directory(pokemon_id, session=session)
         base_dir = response.paths[0]
         image_dir = Path(base_dir) / option
 

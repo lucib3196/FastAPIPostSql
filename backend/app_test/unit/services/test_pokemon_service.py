@@ -3,7 +3,7 @@ from src.services import pokemon_service
 from fastapi import HTTPException
 from pathlib import Path
 from src.core.pokemon_config import MonsterConfig
-from src.services.pokemon_utils import format_pokemon_folder_name
+from backend.src.utils.pokemon_utils import format_pokemon_folder_name
 
 
 def test_get_pokemon_by_id(db_session, pokemon_payload):

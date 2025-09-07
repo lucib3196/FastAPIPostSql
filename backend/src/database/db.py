@@ -33,7 +33,7 @@ settings.DATABASE_URI = DATABASE_URL
 engine = create_engine(
     url=settings.DATABASE_URI,
     echo=True,
-    connect_args={"check_same_thread": False},  # Only needed for SQLite
+    # connect_args={"check_same_thread": False},  # Only needed for SQLite
 )
 Base = SQLModel
 

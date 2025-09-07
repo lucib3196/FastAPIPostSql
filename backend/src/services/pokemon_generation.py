@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from .prompts import *
 from src.services.ai_services import client, multimodal_generation
-from src.services.pokemon_utils import normalize_input, format_prompt
+from backend.src.utils.pokemon_utils import normalize_input, format_prompt
 from src.models import PokemonInput, PokemonData  # ← import the ONE copy
 
 

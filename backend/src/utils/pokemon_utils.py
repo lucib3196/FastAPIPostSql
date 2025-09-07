@@ -1,4 +1,4 @@
-from .prompts import *
+from ..services.prompts import *
 from src.models import *
 
 PokemonSearchInput = Union[Pokemon, Mapping[str, int | str]]
