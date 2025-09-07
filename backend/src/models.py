@@ -23,6 +23,7 @@ class PokemonData(BaseModel):
     description: str
     physical_attr: str
     ptype: str
+    image_description: str | None = None  # optional
 
 
 class PokemonDescription(BaseModel):
@@ -40,6 +41,7 @@ class PokemonDict(TypedDict):
     description: str
     physical_attr: str
     ptype: str
+    image_description: Optional[str]
 
 
 PokemonInput = Union[PokemonData, Mapping[str, Any], PokemonDict]

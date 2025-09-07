@@ -4,7 +4,7 @@ from sqlmodel import select, delete
 from typing import Sequence
 
 
-def add_pokemon(pokemon: Pokemon, session: SessionType) -> Pokemon:
+def create_pokemon(pokemon: Pokemon, session: SessionType) -> Pokemon:
     session.add(pokemon)
     session.commit()
     session.refresh(pokemon)

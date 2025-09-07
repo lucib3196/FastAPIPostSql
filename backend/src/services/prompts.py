@@ -9,10 +9,14 @@ pokemon_description_prompt = """You are given the following information about a 
 
     Guidelines:
     - Make the description fun, lighthearted, and a little humorous — something that feels interesting and playful to read.
-    - Keep it short and punchy: about 400 characters max.
+    - Keep it short and punchy: about 750 characters max.
     - Expand slightly on what the user originally wrote, adding flair or small funny details, but don’t lose the original intent.
     - The final description should feel like a witty Pokédex entry that makes readers smile while still giving useful info.
     - Reminder that these are essentially Pokémon, so the tone should highlight their animal-like qualities while also giving them fun and loving personalities.
+    
+    Additionally you are tasked with generating an image description for the pokemon
+    This description will expand on the physical attributes provided by the user and use the description as well to take into account. The description should be 
+    descriptive of the pokemons feature as it will be used for image generation, but also keep it in the style of the pokedex so it can work as an individual description as well
 """
 
 
@@ -29,7 +33,8 @@ pokemon_image_generation_prompt = """A Pokémon in the style of the 1990s Pokém
     
     ### Pokemon Data
     Name: {name}
-    Core Concept: {description}
+    Core Concept: {new_description}
+    Image Description: {image_description}
     Pokémon Type: {ptype}
     
     
@@ -47,8 +52,6 @@ Base your moves on the creature’s type(s), physical attributes, and personalit
   - **Move Name**
   - **Type** (must align with or complement the Pokémon’s type)
   - **Category** (Physical / Special / Status)
-  - **Power** (if applicable)
-  - **Accuracy**
   - **Description** (short, fun explanation of what the move does, in a Pokémon-style flavor)
 - Make sure the moves balance between offensive, defensive, and flavor-based.
 
@@ -60,53 +63,75 @@ Base your moves on the creature’s type(s), physical attributes, and personalit
 
 
 pokemon_cute_animations = """
+You are designing playful, non-combat animations for a fan-created, Pokémon-inspired creature.
+These are not battle moves — they are cute, goofy, or endearing expressions that showcase personality.
+
+Generate EXACTLY 3 personality-based animations.
+
+Constraints:
+- Tone: lighthearted, charming, anime/Pokédex side-content vibes.
+- Avoid combat terms (damage, accuracy, power, status conditions).
+- Animations should be short and loopable (2–6 frames).
+- Descriptions: concise (1–2 sentences, <= 200 characters).
+- Prefer the creature’s typing ({ptype}); Normal-type allowed for neutral actions.
+- Categories: ["Flavor", "Cute", "Playful"].
+- Moods: ["happy", "silly", "sleepy", "curious", "proud", "shy", "mischievous", "calm"].
+- Styles: ["idle", "dance", "pose", "reaction", "quirk"].
+
+Input:
+- Name: {name}
+- Core Concept: {description}
+- Pokémon Type: {ptype}
+
+Examples:
+
+# Example 1 (Water-type, goofy personality)
+1. Bubble Hop (Water, Cute, happy, dance) — Hops side-to-side while blowing bubbles that pop around its horns.
+2. Puddle Prance (Normal, Playful, mischievous, quirk) — Prances through a puddle, splashing water in a looping rhythm.
+3. Clumsy Tumble (Normal, Cute, silly, reaction) — Trips over its own feet in a goofy way, making others laugh.
+
+# Example 2 (Fire-type, proud personality)
+1. Tail Torch Spin (Fire, Flavor, proud, pose) — Spins its flaming tail like a baton, grinning with confidence.
+2. Warm Nap (Normal, Cute, sleepy, idle) — Curls up and snoozes, tiny heat waves rising gently from its body.
+3. Flicker Wink (Fire, Playful, mischievous, quirk) — Winks as its tail flame flickers into a heart shape.
+
+# Example 3 (Electric-type, energetic personality)
+1. Spark Bounce (Electric, Playful, happy, dance) — Bounces in place with little sparks popping at its feet each time it lands.
+2. Static Fluff (Electric, Cute, silly, reaction) — Shakes itself, puffing up with static-charged fur that sticks out messily.
+3. Zippy Dash (Normal, Flavor, curious, idle) — Darts forward in a quick blur, then looks back proudly with a cheeky grin.
+"""
 
 
-You are designing fun, lighthearted moves for a fan-created Pokémon-inspired creature.  
-The goal is to showcase the creature’s **personality** and **charm** rather than battle strength.  
-Think of these as playful moves that would appear in a Pokémon anime episode, Pokédex entry, or in a side-game focused on personality.
+pokemon_sprite_base = """
+You are a professional pixel artist creating sprite bitmaps for a Game Boy Advance–inspired video game. 
+Follow these artistic and technical constraints:
 
-### Requirements:
-- Generate **2 basic moves**.
-- Each move should include:
-  - **Move Name**
-  - **Type** (aligned loosely with the creature’s typing, but can include playful Normal-type)
-  - **Category**: (Flavor / Cute / Playful) → instead of Physical/Special/Status
-  - **Description**: A short, fun explanation of what the move looks like and why it shows off the Pokémon’s personality.
-- Keep them **cute, goofy, or endearing** — not necessarily strong.
+🎨 Art Style Guidelines
+- Resolution per sprite frame: 16×16, 32×32, or 64×64 pixels, depending on sprite scale.
+- Color Palette: Use 16–32 colors that are vibrant yet slightly muted, matching the GBA aesthetic.
+- Background: Ensure the background is pure white (#FFFFFF), with no transparency.
+- Stylistic Details:
+  • Strong black outlines
+  • High-contrast shading
+  • Clear, readable silhouettes
+- Animation Consistency: Keep proportions and readability uniform across all frames.
 
-### Example Input:
-- Name: Tricklehorn
-- Type: Water
-- Physical Attributes: Small, blue, triceratops-like creature with stubby horns and a droplet-shaped frill.
-- Personality: Goofy, fun-loving, playful but hardworking.
+🖼️ Output Instructions
+- Animation Type:
+  Create a **3/4 quarter-view animation** with exactly 4 frames.
+  Each frame must be unique and clearly depict progression in the animation cycle.
 
-### Example Output:
-1. **Bubble Giggle**  
-   - Type: Water  
-   - Category: Cute  
-   - The Pokémon blows a stream of bubbles and pops them with its horns while giggling.  
+- Layout Format:
+  • Present all 4 frames in a 2×2 grid, with one sprite per quadrant only.
+  • Each sprite must be scaled and positioned to take up as much space as possible within its quadrant, while keeping consistent proportions across frames.
+  • The entire grid must fit within a 1024×1024-pixel canvas.
+  • Sprites must be perfectly centered in their quadrants with consistent alignment.
 
-2. **Horn Wiggle**  
-   - Type: Normal  
-   - Category: Playful  
-   - It wiggles its stubby horns in a silly way to look tough but only makes others smile.  
+- Return Format:
+  • Output the pixel grid only.
+  • Do not include explanatory text, captions, or additional metadata.
+  • Ensure pixel art style strictly matches Game Boy Advance limitations.
 
-3. **Puddle Splash**  
-   - Type: Water  
-   - Category: Flavor  
-   - The Pokémon stomps in a puddle, splashing water everywhere like a child playing.  
-
-4. **Clumsy Tumble**  
-   - Type: Normal  
-   - Category: Cute  
-   - Trips over its own feet in a silly way, making it oddly endearing to watch.  
-
-
-### Pokemon Data
-    Name: {name}
-    Core Concept: {description}
-    Pokémon Type: {ptype}
-    
-    
+## Pose to Generate
+Animation: {animation}
 """

@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 from src.database.db import create_db_and_tables
 
-# from src.web.pokemon import router
+from src.web.pokemon import router
 from src.web.pokemon_folder import router as pw_router
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +19,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-# app.include_router(router)
+app.include_router(router)
 app.include_router(pw_router)
 
 origins = [

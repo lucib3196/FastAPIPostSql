@@ -13,19 +13,24 @@ def encode_image(image_path):
         return base64.b64encode(image_file.read()).decode("utf-8")
 
 
-def generate_image(prompt: str):
+def generate_image(prompt: str, transparent: bool = False):
     response = client.responses.create(
         model="gpt-5",
         input=prompt,
-        tools=[{"type": "image_generation"}],
+        tools=[
+            {
+                "type": "image_generation",
+                "background": "transparent" if transparent else "opaque",
+                "size": "1024x1024",
+            }
+        ],
     )
-
     image_data = [
         output.result
         for output in response.output
         if output.type == "image_generation_call"
     ]
-    return image_data
+    return (response, image_data)
 
 
 def multimodal_generation(prompt: str, image_path: str, response_model):

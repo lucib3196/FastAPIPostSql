@@ -1,28 +1,26 @@
-from src.database.db import create_engine, Base, create_db_and_tables, get_session
-from src.core.app_config import settings
+from src.database.db import create_engine, Base, Session
 import pytest
 
 
 @pytest.fixture(scope="session")
-def engine():
+def test_engine():
     """Create a dedicated in-memory test engine."""
-    settings.ENV = "testing"  # hardcode testing
-    print(f"Created Database {settings.ENV} {settings.DATABASE_URI}")
-    return create_db_and_tables()
+    url = "sqlite:///:memory:"
+    engine = create_engine(url, echo=True, connect_args={"check_same_thread": False})
+    Base.metadata.create_all(engine)
+    return engine
 
 
 @pytest.fixture(scope="function")
-def db_session():
-    session_gen = get_session()
-    session = next(session_gen)  # get the actual Session object
-    try:
+def db_session(test_engine):
+    """New transaction for each test."""
+    with Session(test_engine) as session:
         yield session
-    finally:
-        session_gen.close()
+        session.rollback()  # clean slate each test
 
 
 @pytest.fixture(autouse=True)
-def _clean_db(db_session, engine):
+def _clean_db(db_session, test_engine):
     print("Cleaning database")
-    Base.metadata.drop_all(engine)
-    Base.metadata.create_all(engine)
+    Base.metadata.drop_all(test_engine)
+    Base.metadata.create_all(test_engine)

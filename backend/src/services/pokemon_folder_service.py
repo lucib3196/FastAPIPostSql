@@ -1,20 +1,22 @@
 import asyncio
 import json
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Any
 
 from anyio import to_thread
 from fastapi import HTTPException, UploadFile
 from pydantic import BaseModel
 from starlette import status
-
+from collections.abc import Mapping
 from src.core.pokemon_config import MonsterConfig, ImageDir
 from src.database import pokemon as pokemon_db
 from src.database.db import SessionType
 from src.models import PokemonInput
 from src.response_models import PokemonResponse, PokemonResponsePaths
-from src.services.pokemon_service import get_pokemon_by_id
+from backend.src.services.pokemon_crud import get_pokemon_by_id
 from src.utils.pokemon_utils import format_pokemon_folder_name
+from typing import Union
+from typing import Optional
 
 
 async def set_pokemon_directory(pokemon_id: int, session: SessionType):
@@ -43,7 +45,8 @@ async def set_pokemon_directory(pokemon_id: int, session: SessionType):
 
         data = await add_directory(name=folder_name)
         pokemon.image_directory = data["path"]
-        pokemon_db.add_pokemon(pokemon, session)
+
+        pokemon_db.create_pokemon(pokemon, session)
         return PokemonResponse(
             status=status.HTTP_200_OK,
             detail="Created image directory succesfully",
@@ -65,7 +68,7 @@ async def get_pokemon_directory(pokemon_id: int, session: SessionType):
 
     if not pokemon.image_directory:
         raise HTTPException(
-            status_code=status.HTTP_204_NO_CONTENT,
+            status_code=status.HTTP_202_ACCEPTED,
             detail="The pokemon does not have a directory",
         )
     return PokemonResponsePaths(
@@ -177,11 +180,12 @@ async def add_required_folders_pokemon(
         )
 
 
-async def set_pokemon_base_data(
+async def write_pokemon_data(
     pokemon_id: int,
-    pokemon_data: "PokemonInput",
+    pokemon_data: BaseModel | dict[str, Any] | Mapping[str, Any],
     session: SessionType,
-    data_type: Literal["base_data", "description"] = "base_data",
+    data_type: Literal["base_data", "description", "animation"] = "base_data",
+    animation_dir: Optional[str] = None,
 ):
     """
     Persist Pokémon base data (or description) to the per-Pokémon data folder.
@@ -209,15 +213,20 @@ async def set_pokemon_base_data(
 
         # Validate data_type and compute target path
         try:
-            filename = MonsterConfig.FILES[data_type]
+            if data_type != "animation":
+                filename = MonsterConfig.FILES[data_type]
+                file_path = pokemon_dir / "data" / filename
+                file_path.parent.mkdir(parents=True, exist_ok=True)
+
+            elif data_type == "animation":
+                assert animation_dir
+                file_path = pokemon_dir / "animations" / f"{str(animation_dir)}.json"
+                file_path.parent.mkdir(parents=True, exist_ok=True)
         except KeyError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Invalid data_type '{data_type}'. Expected one of {list(MonsterConfig.FILES.keys())}.",
             )
-
-        file_path = pokemon_dir / "data" / filename
-        file_path.parent.mkdir(parents=True, exist_ok=True)
 
         # Serialize content to JSON (consistent & readable)
         if isinstance(pokemon_data, BaseModel):
@@ -291,7 +300,7 @@ async def get_pokemon_file(
 
         if not file_path.exists():
             raise HTTPException(
-                status_code=status.HTTP_204_NO_CONTENT, detail="No Content"
+                status_code=status.HTTP_202_ACCEPTED, detail="No Content"
             )
 
         return {"content": file_path.read_text(encoding="utf-8")}
@@ -346,13 +355,13 @@ async def get_all_pokemon_images(
 
         if not image_dir.exists():
             raise HTTPException(
-                status_code=status.HTTP_204_NO_CONTENT,
+                status_code=status.HTTP_202_ACCEPTED,
                 detail=f"The Monster does not contain a directory called option {option}",
             )
         files = list(image_dir.glob("*.png"))
         if not files:
             raise HTTPException(
-                status_code=status.HTTP_204_NO_CONTENT,
+                status_code=status.HTTP_202_ACCEPTED,
                 detail=f"There are no images available for {option}",
             )
         return files

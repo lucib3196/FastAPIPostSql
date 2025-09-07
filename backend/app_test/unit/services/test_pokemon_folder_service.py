@@ -2,7 +2,7 @@ from app_test.unit.services.fixture_pokemon_service import *
 from src.services import pokemon_folder_service as pokemon_service
 from pathlib import Path
 from src.core.pokemon_config import MonsterConfig
-from backend.src.utils.pokemon_utils import format_pokemon_folder_name
+from src.utils.pokemon_utils import format_pokemon_folder_name
 from src.models import PokemonData
 import json
 from src.response_models import PokemonResponsePaths

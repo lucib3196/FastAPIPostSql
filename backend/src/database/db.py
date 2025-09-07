@@ -28,8 +28,6 @@ else:
 
 
 settings.DATABASE_URI = DATABASE_URL
-
-
 engine = create_engine(
     url=settings.DATABASE_URI,
     echo=True,
@@ -38,7 +36,7 @@ engine = create_engine(
 Base = SQLModel
 
 
-def create_db_and_tables():
+def create_db_and_tables(engine=engine):
     Base.metadata.create_all(engine)
     return engine
 

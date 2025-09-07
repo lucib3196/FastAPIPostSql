@@ -10,6 +10,12 @@ router = APIRouter(prefix="/pf", tags=["pokemon"])
 
 
 # ── Directories ────────────────────────────────────────────────────────────────
+@router.post("/{pokemon_id}/directory")
+async def set_pokemon_directory(pokemon_id: int, session: SessionType):
+    try:
+        return await svc.set_pokemon_directory(pokemon_id=pokemon_id, session=session)
+    except HTTPException as e:
+        raise e
 
 
 @router.get("/{pokemon_id}/directory")
