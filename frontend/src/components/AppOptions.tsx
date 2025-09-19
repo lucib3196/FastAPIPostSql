@@ -12,7 +12,7 @@ export default function AppOptions({ onChange }: AppOptionsProps) {
       <MyButton
         variant={"secondary"}
         name={"Create A Monster (coming soon)"}
-        disabled={true}
+ 
         onClick={() => onChange("Create")}
       ></MyButton>
       <MyButton

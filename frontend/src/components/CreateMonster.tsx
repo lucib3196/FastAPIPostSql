@@ -18,18 +18,17 @@ export default function CreateMonster() {
         setLoading(true);
         setResult(null);
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("name", monsterName);
-        formData.append("ptype", monsterType);
-        formData.append("description", monsterDescription);
-        formData.append("physical_attr", monsterPhysical);
-        console.log(Object.fromEntries(formData.entries()));
+        const payload = {
+            name: monsterName,
+            ptype: monsterType,
+            description: monsterDescription,
+            physical_attr: monsterPhysical,
+        };
 
         try {
-            const result = await api.post("/pokemon/create_with_image/", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
+            const result = await api.post(`/pokemon/create/complete/${monsterName}`, payload, {
+                headers: { "Content-Type": "application/json" },
             });
-            console.log(result.data);
 
 
         } catch (error) {

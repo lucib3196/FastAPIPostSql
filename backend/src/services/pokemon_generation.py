@@ -2,11 +2,12 @@ from pydantic import BaseModel
 from typing import List, Optional
 from .prompts import *
 from src.services.ai_services import client, multimodal_generation, generate_image
-from backend.src.utils.pokemon_utils import normalize_input, format_prompt
+from src.utils.pokemon_utils import normalize_input, format_prompt
 from src.models import PokemonInput, PokemonData  # ← import the ONE copy
 from typing import Literal
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
+import base64
 
 load_dotenv()
 async_client = AsyncOpenAI()
@@ -41,6 +42,7 @@ class PokemonMove(BaseModel):
     move_type: Literal["attack", "defence"]
     category: Literal["physical", "special"]
     description: str
+    sprite_animation: str
 
     @property
     def to_string(self) -> str:
@@ -50,6 +52,7 @@ class PokemonMove(BaseModel):
             f"Move Type: {self.move_type.capitalize()}\n"
             f"Category: {self.category.capitalize()}\n"
             f"Description: {self.description}"
+            f"Sprite Animation: {self.sprite_animation}"
         )
 
 
@@ -67,6 +70,7 @@ class PokemonExpression(BaseModel):
     sprite_hint: str | None = (
         None  # optional extra hint for sprite design (e.g. "tail wagging")
     )
+    sprite_animation: str
 
     @property
     def to_string(self) -> str:
@@ -76,6 +80,7 @@ class PokemonExpression(BaseModel):
             f"Style: {self.style.capitalize()}\n"
             f"Description: {self.description}\n"
             f"Sprite Hint: {self.sprite_hint or 'N/A'}"
+            f"Sprite Animation: {self.sprite_animation}"
         )
 
 
@@ -152,25 +157,39 @@ def generate_pokemon_base_image(
 
 
 async def fwp_image_generation(response, prompt, transparent: bool = False):
-    response_fwup = await async_client.responses.create(
-        model="gpt-5",
-        previous_response_id=response.id,
-        input=prompt,
-        tools=[
-            {
-                "type": "image_generation",
-                "background": "transparent" if transparent else "opaque",
-                "size": "1024x1024",
-                "quality": "high",
-            }
-        ],
+    result = await async_client.images.edit(
+        model="gpt-image-1",
+        image=[open(response, "rb")],
+        prompt=prompt,
+        background="opaque",
+        size="1024x1024",
+        quality="high",
     )
-    image_data = [
-        output.result
-        for output in response_fwup.output
-        if output.type == "image_generation_call"
-    ]
-    return (response_fwup, image_data)
+    if not result or not result.data:
+        raise ValueError("Image generation failed, no data returned.")
+    image_base64 = result.data[0].b64_json
+    if not image_base64:
+        raise ValueError("Image generation failed, no data returned.")
+
+    # response_fwup = await async_client.responses.create(
+    #     model="gpt-5",
+    #     previous_response_id=response.id,
+    #     input=prompt,
+    #     tools=[
+    #         {
+    #             "type": "image_generation",
+    #             "background": "transparent" if transparent else "opaque",
+    #             "size": "1024x1024",
+    #             "quality": "high",
+    #         }
+    #     ],
+    # )
+    # image_data = [
+    #     output.result
+    #     for output in response_fwup.output
+    #     if output.type == "image_generation_call"
+    # ]
+    return (result, [image_base64])
 
 
 async def fwp_image_generation_sprite(response, animation: str, transparent=False):

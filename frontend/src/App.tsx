@@ -5,6 +5,7 @@ import ViewAllMonster from "./components/ViewAllMonsters";
 
 import type { Option } from "./components/AppOptions";
 import { ViewIndividualMonster } from "./components/ViewIndividualMonster";
+import ViewMonsterCardPage from "./pages/ViewMonsterCards";
 export default function App() {
   const [option, setOption] = useState<Option>("View Single");
 
@@ -50,6 +51,8 @@ export default function App() {
       <div className="pb-10 text-center text-xs text-gray-400">
         tip: resize the window — layout adapts 🌊
       </div>
+
+      <ViewMonsterCardPage />
     </section>
   );
 }

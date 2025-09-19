@@ -13,7 +13,7 @@ from src.database import pokemon as pokemon_db
 from src.database.db import SessionType
 from src.models import PokemonInput
 from src.response_models import PokemonResponse, PokemonResponsePaths
-from backend.src.services.pokemon_crud import get_pokemon_by_id
+from src.services.pokemon_crud import get_pokemon_by_id
 from src.utils.pokemon_utils import format_pokemon_folder_name
 from typing import Union
 from typing import Optional

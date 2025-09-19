@@ -430,10 +430,11 @@ async def create_pokemon_complete(
 
         # 6) Parse to sprite jobs (run concurrently; tolerate partial failures)
         parse_tasks = [
-            parse_moveset(moveset=moveset, prev_response=base_img_resp),
+            parse_moveset(moveset=moveset, prev_response=base_filepath),
             parse_expression(
-                expressive=expressive_moveset, prev_response=base_img_resp
+                expressive=expressive_moveset, prev_response=base_filepath
             ),
+            parse_generic(prev_response=base_filepath),
         ]
         parse_results = await asyncio.gather(*parse_tasks, return_exceptions=True)
 

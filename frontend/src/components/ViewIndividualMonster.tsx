@@ -17,7 +17,7 @@ export function ViewIndividualMonster() {
     const { ref: containerRef, size } = useContainerSize<HTMLDivElement>();
     useEffect(() => {
         const getMonster = async () => {
-            const monsterAnimation = await GetPokemonFiles(2, "animations");
+            const monsterAnimation = await GetPokemonFiles(36, "animations");
             const data = SplitFileNames(monsterAnimation);
             setMonsterData(data);
 

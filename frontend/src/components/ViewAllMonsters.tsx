@@ -10,7 +10,7 @@ function MonsterAllAnimations() {
 
     useEffect(() => {
         const getMonster = async () => {
-            const monsterAnimation = await GetPokemonFiles(2, "animations");
+            const monsterAnimation = await GetPokemonFiles(32, "animations");
             const data = SplitFileNames(monsterAnimation);
             setMonsterData(data);
         };

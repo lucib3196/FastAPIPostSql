@@ -9,7 +9,7 @@ from src.database.db import SessionType
 from src.models import Pokemon, PokemonInput
 from src.services import pokemon_full
 from src.services import pokemon_folder_service as svc
-from backend.src.services import pokemon_crud
+from src.services import pokemon_crud
 
 router = APIRouter(prefix="/pokemon", tags=["pokemon"])
 
@@ -42,11 +42,12 @@ async def add_pokemon_complete(
     pokemon_name: str, pokemon_data: PokemonInput, session: SessionType
 ):
     try:
-        await pokemon_full.create_pokemon_complete(
+        response = await pokemon_full.create_pokemon_complete(
             pokemon=Pokemon(name=pokemon_name),
             pokemon_data=pokemon_data,
             session=session,
         )
+        return response
     except HTTPException as e:
         raise e
 
