@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pydantic import AnyHttpUrl, field_validator
 from pydantic_core.core_schema import ValidationInfo
 from pydantic_settings import BaseSettings
+from pathlib import Path
 
 load_dotenv()
 
@@ -19,6 +20,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # how long session info is retained
     DATABASE_URI: Optional[str] = None
     AUTH_URL: str = "/auth/login"
+
+    FIREBASE_PATH: Optional[str | Path] = None
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
@@ -48,4 +51,7 @@ settings = Settings(
         "http://127.0.0.1:5173",
     ],
     SECRET_KEY="secret_key_need_to_change",
+    FIREBASE_PATH=Path(__file__).resolve().parents[3] / "firebase_cred.json",
 )
+
+print(settings)

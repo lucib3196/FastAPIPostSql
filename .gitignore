@@ -1,5 +1,5 @@
 \venv
 
-
+firebase_cred.json
 .env
 backend/src/images/monsters
