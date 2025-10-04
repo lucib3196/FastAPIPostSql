@@ -29,13 +29,13 @@ jobs:
 
     
     - name: Install dependencies
-      working-directory: ./frontend
+      working-directory: frontend
       run: npm ci
 
     - name: Build app
-      working-directory: ./frontend
+      working-directory: frontend
       run: npm run build --if-present
 
     - name: Run tests
-      working-directory: ./frontend
+      working-directory: frontend
       run: npm test
